@@ -1,0 +1,56 @@
+# This workflow will build a golang project
+# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-go
+
+# Name é o nome da nossa aplicação
+name: Go
+
+# On é quando vai executar a rotina, nesse caso, sempre que dermos push ou criamos uma PR para branch master
+on:
+  push:
+    branches: [ "master" ]
+  pull_request:
+    branches: [ "master" ]
+
+jobs:
+  # Abaixo dos jobs, temos todas as tarefas que serão executadas
+  # Tarefa test será responsável apenas por realizar os testes
+  test:
+    # Runs-on define qual máquina deve ser utilizada
+    runs-on: ubuntu-latest
+    
+    # Os steps são os passos que a tarefa vai executar - define quais comandos devem ser executados em sequência, como um script.
+    steps:
+    # No uses é setado o repositório que será efetuado o passo
+    - uses: actions/checkout@v3
+      
+    # Configuração do Go
+    - name: Set up Go
+      uses: actions/setup-go@v3
+      with: # Informamos com o with a versão do Go
+        go-version: 1.19
+      
+    # Configuração do banco de dados (prepara as imagens do banco)
+    # Não precisamos configurar nada do DOCKER pois na imagem do ubuntu já vem tudo configurado
+      # A tag run é responsável por executar o comando na máquina - podemos executar apenas um run por passo.
+    - name: Build-DB
+      run: docker-compose build
+      
+    # Sobre o banco de dados
+    - name: Create-DB
+      run: docker-compose up -d
+    
+    # Executa o teste
+    - name: Test
+      run: go test -v main_test.go
+      
+  # Task para realizar o build da aplicação
+  build:
+    # Tag needs informa que precisa que outra tarefa seja executada antes
+    needs: test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      
+      # Compila o cógio
+      - name: Build
+        run: go build -v main.go
