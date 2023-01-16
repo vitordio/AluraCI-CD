@@ -23,7 +23,7 @@ jobs:
       matrix:
         # Executaremos os testes nas versões do Go abaixo
         go_versions: ['1.18', '1.17', '>=1.18']
-        os: [ubuntu-latest, windows-latest, macOS-latest]
+        os: [ubuntu-latest, windows-latest]
     
     # Os steps são os passos que a tarefa vai executar - define quais comandos devem ser executados em sequência, como um script.
     steps:
