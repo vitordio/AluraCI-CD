@@ -11,9 +11,9 @@ name: Go
 # On é quando vai executar a rotina, nesse caso, sempre que dermos push ou criamos uma PR para branch master
 on:
   push:
-    branches: [ "master" ]
+    branches: [ "*" ]
   pull_request:
-    branches: [ "master" ]
+    branches: [ "*" ]
 
 jobs:
   # Abaixo dos jobs, temos todas as tarefas que serão executadas
