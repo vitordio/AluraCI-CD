@@ -18,6 +18,12 @@ jobs:
     # Runs-on define qual máquina deve ser utilizada
     runs-on: ubuntu-latest
     
+    # Estratégia de matrizes - servem para testarmos nossa action em diferentes configurações
+    strategy:
+      matrix:
+        # Executaremos os testes nas versões do Go abaixo
+        go_versions: ['1.18', '1.17', '>=1.18']
+    
     # Os steps são os passos que a tarefa vai executar - define quais comandos devem ser executados em sequência, como um script.
     steps:
     # No uses é setado o repositório que será efetuado o passo
@@ -27,7 +33,8 @@ jobs:
     - name: Set up Go
       uses: actions/setup-go@v3
       with: # Informamos com o with a versão do Go
-        go-version: 1.19
+        # Na estratégia de matriz, conseguimos pegar o valor definido usando ${{ matrix. }}
+        go-version: ${{ matrix.go_versions }}
       
     # Configuração do banco de dados (prepara as imagens do banco)
     # Não precisamos configurar nada do DOCKER pois na imagem do ubuntu já vem tudo configurado
