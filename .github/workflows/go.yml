@@ -4,6 +4,10 @@
 # Name é o nome da nossa aplicação
 name: Go
 
+# Secrets
+ # Podemos usar os secrets do github para não expor as senhas no workflow
+  # Para isso, usamos o ${{ secrets.NOME_DA_VARIAVEL }}
+  
 # On é quando vai executar a rotina, nesse caso, sempre que dermos push ou criamos uma PR para branch master
 on:
   push:
