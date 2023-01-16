@@ -59,6 +59,12 @@ jobs:
   build:
     # Tag needs informa que precisa que outra tarefa seja executada antes
     needs: test
+    
+    strategy:
+      matrix:
+        # Executaremos os testes nas versões do Go abaixo
+        os: ['ubuntu-latest', 'ubuntu-18.04']
+        
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v3
