@@ -80,3 +80,8 @@ jobs:
       # Compila o cógio
       - name: Build
         run: go build -v main.go
+ 
+  # Job para executar tarefas relacionadas ao Docker configurado no Docker.yml
+  docker: 
+   needs: build
+   uses: ./.github/workflows/Docker.yml
