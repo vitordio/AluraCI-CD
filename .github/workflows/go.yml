@@ -29,6 +29,14 @@ jobs:
     # Runs-on define qual máquina deve ser utilizada
     runs-on: ${{ matrix.os }}
     
+    # Definição das variáveis de ambiente
+    env:
+     DB_HOST: localhost
+     DB_PORT: 5432
+     DB_USER: root
+     DB_PASSWORD: root
+     DB_NAME: root
+    
     # Os steps são os passos que a tarefa vai executar - define quais comandos devem ser executados em sequência, como um script.
     steps:
     # No uses é setado o repositório que será efetuado o passo
