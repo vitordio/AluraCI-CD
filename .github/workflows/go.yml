@@ -64,20 +64,23 @@ jobs:
   build:
     # Tag needs informa que precisa que outra tarefa seja executada antes
     needs: test
-    
-    strategy:
-      matrix:
-        # Executaremos os testes nas versões do Go abaixo
-        os: ['ubuntu-latest', 'ubuntu-18.04']
-        
-    runs-on: ${{ matrix.os }}
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
       
       # Compila o cógio
       - name: Build
         run: go build -v main.go
- 
+        
+      # Realiza a criação de um artefato para usar nos workflows subsequentes (como o Docker.yml)
+      - name: Upload a Build Artifact
+        uses: actions/upload-artifact@v3.1.2
+        with:
+          # Nome do artefato
+          name: programa_go
+          # Passamos qual arquivo vamos salvar (no caso o arquivo main buildado)
+          path: main
+     
   # Job para executar tarefas relacionadas ao Docker configurado no Docker.yml
   docker:
     needs: build
