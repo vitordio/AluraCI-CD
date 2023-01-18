@@ -16,6 +16,13 @@ jobs:
     - name: Set up Docker Build
       uses: docker/setup-buildx-action@v2.2.1
 
+    # Realização do download do artefato criado no build
+    - name: Download a Build Artifact
+      uses: actions/download-artifact@v3.0.2
+      with:
+        # Nome do artefato que foi salvo
+        name: programa_go
+
     # Para usar o container que vamos criar, será necessário colocá-lo em um repositório
     # Para isso precisamos fazer o login no DockerHub
     - name: Docker Login
