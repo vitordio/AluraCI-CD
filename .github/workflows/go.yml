@@ -83,5 +83,6 @@ jobs:
  
   # Job para executar tarefas relacionadas ao Docker configurado no Docker.yml
   docker:
-   needs: build
-   uses: ./.github/workflows/Docker.yml
+    needs: build
+    uses: ./.github/workflows/Docker.yml
+    secrets: inherit
