@@ -1,60 +1,84 @@
+# Name é o nome da nossa aplicação
 name: Go
 
+# Secrets
+ # Podemos usar os secrets do github para não expor as senhas no workflow
+  # Para isso, usamos o ${{ secrets.NOME_DA_VARIAVEL }}
+  
+# On é quando vai executar a rotina, nesse caso, sempre que dermos push ou criamos uma PR para branch master
 on:
   push:
-    branches: [ '*' ]
+    branches: [ "*" ]
   pull_request:
-    branches: [ '*' ]
+    branches: [ "*" ]
 
 jobs:
-
-  test:
-    runs-on: ${{ matrix.os }}
-    env:
-      HOST: localhost
-      PORT: 5432
-      USER: root
-      PASSWORD: root
-      DBNAME: root
+  # Abaixo dos jobs, temos todas as tarefas que serão executadas
+  # Tarefa test será responsável apenas por realizar os testes
+  test:    
+    # Estratégia de matrizes - servem para testarmos nossa action em diferentes configurações
     strategy:
       matrix:
-        go_version: ['1.18', '1.17', '>=1.18']
+        # Executaremos os testes nas versões do Go abaixo
+        go_versions: ['1.18', '1.17', '>=1.18']
         os: ['ubuntu-latest', 'ubuntu-18.04']
+        
+    # Runs-on define qual máquina deve ser utilizada
+    runs-on: ${{ matrix.os }}
+    
+    # Definição das variáveis de ambiente
+    env:
+     DB_HOST: localhost
+     DB_PORT: 5432
+     DB_USER: root
+     DB_PASSWORD: root
+     DB_NAME: root
+    
+    # Os steps são os passos que a tarefa vai executar - define quais comandos devem ser executados em sequência, como um script.
     steps:
+    # No uses é setado o repositório que será efetuado o passo
     - uses: actions/checkout@v3
-
+      
+    # Configuração do Go
     - name: Set up Go
       uses: actions/setup-go@v3
-      with:
-        go-version: ${{ matrix.go_version }}
+      with: # Informamos com o with a versão do Go
+        # Na estratégia de matriz, conseguimos pegar o valor definido usando ${{ matrix. }}
+        go-version: ${{ matrix.go_versions }}
       
+    # Configuração do banco de dados (prepara as imagens do banco)
+    # Não precisamos configurar nada do DOCKER pois na imagem do ubuntu já vem tudo configurado
+      # A tag run é responsável por executar o comando na máquina - podemos executar apenas um run por passo.
     - name: Build-DB
       run: docker-compose build
       
+    # Sobre o banco de dados
     - name: Create-DB
       run: docker-compose up -d
-
+    
+    # Executa o teste
     - name: Test
-      run: go test -v main_test.go 
+      run: go test -v main_test.go
       
-  
+  # Task para realizar o build da aplicação
   build:
+    # Tag needs informa que precisa que outra tarefa seja executada antes
     needs: test
-    runs-on: ubuntu-latest
+    
+    strategy:
+      matrix:
+        # Executaremos os testes nas versões do Go abaixo
+        os: ['ubuntu-latest', 'ubuntu-18.04']
+        
+    runs-on: ${{ matrix.os }}
     steps:
-    - uses: actions/checkout@v3
-    - name: Build
-      run: go build -v main.go
+      - uses: actions/checkout@v3
       
-    - name: Upload a Build Artifact
-      uses: actions/upload-artifact@v3.1.0
-      with:
-    # Artifact name
-        name: programa
-    # A file, directory or wildcard pattern that describes what to upload
-        path: main
-
-
+      # Compila o cógio
+      - name: Build
+        run: go build -v main.go
+ 
+  # Job para executar tarefas relacionadas ao Docker configurado no Docker.yml
   docker:
     needs: build
     uses: ./.github/workflows/Docker.yml
