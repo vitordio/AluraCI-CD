@@ -72,7 +72,9 @@ jobs:
       - name: Build
         run: go build -v main.go
         
-      # Realiza a criação de um artefato para usar nos workflows subsequentes (como o Docker.yml)
+      # Para não repetirmos etapas, como a compilação do programa, podemos salvar os resultados
+      # de uma rotina para usar em outra; e quem faz isso são os artefatos. Sendo assim,
+      # salvamos o resultado da compilação do programa, que foi feita no go.yml em build utilizando os artefatos.
       - name: Upload a Build Artifact
         uses: actions/upload-artifact@v3.1.2
         with:
