@@ -82,6 +82,6 @@ jobs:
         run: go build -v main.go
  
   # Job para executar tarefas relacionadas ao Docker configurado no Docker.yml
-  docker: 
+  docker:
    needs: build
-   uses: ./.github/workflows/Docker.yml
+   uses: /.github/workflows/Docker.yml@latest
